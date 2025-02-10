@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Listening Stats</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">🎵 My Spotify Listening Stats</h1>
+
+        <h2 class="mt-4">Top 3 Artists</h2>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Artist</th>
+                    <th>hours Played</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for _, row in top_artists.iterrows() %}
+                <tr>
+                    <td>{{ row["month"] }}</td>
+                    <td>{{ row["artistName"] }}</td>
+                    <td>{{ row["hoursPlayed"] | round(1) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2 class="mt-4">Top 5 Songs</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Songs</th>
+                    <th>Artists</th>
+                    <th>hours Played</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for _, row in top_songs.iterrows() %}
+                <tr>
+                    <td>{{ row["trackName"] }}</td>
+                    <td>{{ row["artistName"] }}</td>
+                    <td>{{ row["hoursPlayed"] | round(1) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h2 class="mt-4">Top 3 Artist per month</h2>
+        <div class="mb-4">
+            <label for="month" class="form-lable">Select Month:</label>
+                <select name="dropdown" class="form-select d-inline-block w-auto">
+                    {% for month in months %}
+                    <option value="{{month}}">{{ month }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Artists</th>
+                    <th>hours Played</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for _, row in top_artists %}
+                <tr>
+                    <td>{{ row["month"] }}</td>
+                    <td>{{ row["artistName"] }}</td>
+                    <td>{{ row["hoursPlayed"] | round(1) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+</body>
+</html>
