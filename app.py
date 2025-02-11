@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import pandas as pd
 import os
 import glob
@@ -55,19 +55,35 @@ def index():
         .sort_values(by="hoursPlayed", ascending=False)
         .head(5)
     )
+    # Get the options
+    all_months = spotify_df["month"].unique()
 
-    top_artists_per_month = (
-        spotify_df.groupby(["month","artistName"])["hoursPlayed"]
-        .sum()
-        .reset_index()
-    )
-    top_artists_monthly = (
-        top_artists_per_month.sort_values(["month","hoursPlayed"], ascending=[True,False])
-        .groupby("month")
-        .head(2)
-    )
+    # instantiate selected month 
+    selected_month = None  
+    # instantiate 
+    top_artists_monthly = []
 
-    return render_template("index.html", top_artists=top_artists, top_songs=top_songs, months=top_artists_monthly["month"].unique())
+    if request.method == "POST":
+        selected_month = request.form.get("dropdown")
+        if selected_month:
+            # Get top 3 artists based on the selected month
+            top_artists_monthly = (
+                spotify_df[spotify_df["month"] == selected_month]
+                .groupby("artistName")["hoursPlayed"]
+                .sum()
+                .reset_index()
+                .sort_values(by="hoursPlayed", ascending=False)
+                .head(3)
+            ).to_dict(orient="records") 
+
+
+    return render_template(
+        "index.html",
+        top_artists=top_artists,
+        top_songs=top_songs, 
+        top_artists_monthly=top_artists_monthly, 
+        months=all_months,
+        selected_month=selected_month)
 
 
 if __name__ == "__main__":
