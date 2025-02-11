@@ -39,6 +39,23 @@ spotify_df = load_spotify_data()
 
 @app.route("/",methods=["GET", "POST"])
 def index():
+    # Get the top 5 artists
+    top_artists = (
+        spotify_df.groupby("artistName")["hoursPlayed"]
+        .sum()
+        .reset_index()
+        .sort_values(by="hoursPlayed", ascending=False)
+        .head(5)
+    )
+    # Get the top 5 songs
+    top_songs = (
+        spotify_df.groupby(["trackName","artistName"])["hoursPlayed"]
+        .sum()
+        .reset_index()
+        .sort_values(by="hoursPlayed", ascending=False)
+        .head(5)
+    )
+
     top_artists_per_month = (
         spotify_df.groupby(["month","artistName"])["hoursPlayed"]
         .sum()
@@ -50,15 +67,7 @@ def index():
         .head(2)
     )
 
-    top_songs = (
-        spotify_df.groupby(["trackName","artistName"])["hoursPlayed"]
-        .sum()
-        .reset_index()
-        .sort_values(by="hoursPlayed", ascending=False)
-        .head(5)
-    )
-
-    return render_template("index.html", top_artists=top_artists_monthly, top_songs=top_songs, months=top_artists_monthly["month"].unique())
+    return render_template("index.html", top_artists=top_artists, top_songs=top_songs, months=top_artists_monthly["month"].unique())
 
 
 if __name__ == "__main__":
